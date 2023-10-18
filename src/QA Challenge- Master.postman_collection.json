@@ -1,0 +1,596 @@
+{
+  "info": {
+    "_postman_id": "6a38aed9-9ebf-406f-b0ae-110983a7ab95",
+    "name": "QA Challenge- Master",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "28668122",
+    "_collection_link": "https://lively-crater-953925.postman.co/workspace/AvastCTAbuttons~4d74221e-7ef7-4d49-be87-2f8d598c47ee/collection/28668122-6a38aed9-9ebf-406f-b0ae-110983a7ab95?action=share&source=collection_link&creator=28668122"
+  },
+  "item": [
+    {
+      "name": "Positive tests",
+      "item": [
+        {
+          "name": "Get Employee List",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Response status code is 200\", function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "",
+                  "pm.test(\"Verify that 'partitionKey' and 'sortKey' fields are present in the response\", function () {",
+                  "    const responseData = pm.response.json();",
+                  "    pm.expect(responseData).to.be.an('array');",
+                  "    responseData.forEach(function (employee) {",
+                  "        pm.expect(employee).to.have.property('partitionKey');",
+                  "        pm.expect(employee).to.have.property('sortKey');",
+                  "    });",
+                  "});",
+                  "",
+                  "",
+                  "pm.test(\"Validate username is a non-empty string\", function () {",
+                  "    const responseData = pm.response.json();",
+                  "    pm.expect(responseData).to.be.an('array');",
+                  "    responseData.forEach(function (employee) {",
+                  "        pm.expect(employee.username).to.be.a('string').and.to.have.lengthOf.at.least(1, \"Value should not be empty\");",
+                  "    });",
+                  "});",
+                  "",
+                  "pm.test(\"The dependants field is a non-negative integer\", function () {",
+                  "    const responseData = pm.response.json();",
+                  "    responseData.forEach(function (employee) {",
+                  "        pm.expect(employee.dependants).to.be.a('number').and.to.be.at.least(0);",
+                  "    });",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Basic {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{url}}",
+              "host": ["{{url}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Add Employee",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [""],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const responseJson = pm.response.json();",
+                  "const id = responseJson.id;",
+                  "pm.environment.set(\"id\", id);",
+                  "",
+                  "",
+                  "pm.test(\"Response status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "",
+                  "pm.test(\"PartitionKey is a non-empty string\", function () {",
+                  "    const responseData = pm.response.json();",
+                  "    pm.expect(responseData.partitionKey).to.exist.and.to.be.a('string').and.to.have.lengthOf.at.least(1);",
+                  "});",
+                  "",
+                  "",
+                  "pm.test(\"SortKey is a non-empty string\", function () {",
+                  "    const responseData = pm.response.json();",
+                  "    pm.expect(responseData).to.be.an('object');",
+                  "    pm.expect(responseData.sortKey).to.be.a('string').and.to.have.lengthOf.at.least(1, \"SortKey should not be empty\");",
+                  "});",
+                  "",
+                  "",
+                  "pm.test(\"Username is a non-empty string\", function () {",
+                  "    const responseData = pm.response.json();",
+                  "    pm.expect(responseData).to.be.an('object');",
+                  "    pm.expect(responseData.username).to.be.a('string').and.to.have.lengthOf.at.least(1, \"Username should not be empty\");",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Basic {{token}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"firstName\": \"{{nameCreate}}\",\n    \"lastName\": \"{{lastnameCreate}}\",\n    \"dependants\": {{dependantsCreate}}\n}\n\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{url}}",
+              "host": ["{{url}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Employee",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Response status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response is an object with specific properties\", function () {",
+                  "    const responseBody = pm.response.json();",
+                  "    pm.expect(responseBody).to.be.an('object').and.to.include.all.keys(",
+                  "        'partitionKey',",
+                  "        'sortKey',",
+                  "        'username',",
+                  "        'id',",
+                  "        'firstName',",
+                  "        'lastName',",
+                  "        'dependants',",
+                  "        'expiration',",
+                  "        'salary',",
+                  "        'gross',",
+                  "        'benefitsCost',",
+                  "        'net'",
+                  "    );",
+                  "});",
+                  "",
+                  ""
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Basic {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{url}}/{{id}}",
+              "host": ["{{url}}"],
+              "path": ["{{id}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Employee",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Response status code is 200\", function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "",
+                  "pm.test(\"Username is a non-empty string\", function () {",
+                  "    const responseData = pm.response.json();",
+                  "    pm.expect(responseData).to.be.an('object');",
+                  "    pm.expect(responseData.username).to.be.a('string').and.to.have.lengthOf.at.least(1, \"Username should not be empty\");",
+                  "});",
+                  "",
+                  "",
+                  "pm.test(\"ID is a non-empty string\", function () {",
+                  "  const responseData = pm.response.json();",
+                  "  pm.expect(responseData.id).to.be.a('string').and.to.have.lengthOf.at.least(1, \"ID should not be empty\");",
+                  "});",
+                  "",
+                  "",
+                  "pm.test(\"First name is a non-empty string\", function () {",
+                  "    const responseData = pm.response.json();",
+                  "    pm.expect(responseData.firstName).to.be.a('string').and.to.have.lengthOf.at.least(1, \"First name should not be empty\");",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [""],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Basic {{token}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"id\": \"{{id}}\",\n    \"firstName\": \"{{nameUpdate}}\",\n    \"lastName\": \"{{lastnameUpdate}}\",\n    \"dependants\": {{dependantsUpdate}}\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{url}}",
+              "host": ["{{url}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Employee",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [""],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Basic {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{url}}/{{id}}",
+              "host": ["{{url}}"],
+              "path": ["{{id}}"]
+            }
+          },
+          "response": []
+        }
+      ],
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [""]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [""]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Negative tests",
+      "item": [
+        {
+          "name": "Get Employee List With Incorrect Token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Response status code is 401\", function () {",
+                  "  pm.response.to.have.status(401);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Basic VGVzdFVzZXIzMjA6Q3hwMz91WC8zOzVB",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{url}}",
+              "host": ["{{url}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Add Employee With Different Body",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [""],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const responseJson = pm.response.json();",
+                  "const id = responseJson.id;",
+                  "pm.environment.set(\"id\", id);",
+                  "",
+                  "",
+                  "pm.test(\"Response status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "",
+                  "pm.test(\"PartitionKey is a non-empty string\", function () {",
+                  "    const responseData = pm.response.json();",
+                  "    pm.expect(responseData.partitionKey).to.exist.and.to.be.a('string').and.to.have.lengthOf.at.least(1);",
+                  "});",
+                  "",
+                  "",
+                  "pm.test(\"SortKey is a non-empty string\", function () {",
+                  "    const responseData = pm.response.json();",
+                  "    pm.expect(responseData).to.be.an('object');",
+                  "    pm.expect(responseData.sortKey).to.be.a('string').and.to.have.lengthOf.at.least(1, \"SortKey should not be empty\");",
+                  "});",
+                  "",
+                  "",
+                  "pm.test(\"Username is a non-empty string\", function () {",
+                  "    const responseData = pm.response.json();",
+                  "    pm.expect(responseData).to.be.an('object');",
+                  "    pm.expect(responseData.username).to.be.a('string').and.to.have.lengthOf.at.least(1, \"Username should not be empty\");",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Basic {{token}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"firstName\": \"{{nameCreate}}\",\n    \"lastName\": \"{{lastnameCreate}}\",\n    \"dependants\": {{dependantsCreate}},\n    \"extraRow\": 13123123,\n    \"extraRow1\": \"something\",\n    \"extraRow2\": \"something\",\n    \"extraRow3\": \"something\"\n}\n\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{url}}",
+              "host": ["{{url}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Employee With Incorrect ID",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Response status code is 500\", function () {",
+                  "  pm.response.to.have.status(500);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Basic {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{url}}/e0fb3301-cb3e-47f1-9b51-35fff179sajhk",
+              "host": ["{{url}}"],
+              "path": ["e0fb3301-cb3e-47f1-9b51-35fff179sajhk"],
+              "query": [
+                {
+                  "key": "",
+                  "value": "",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Employee With Incorrect ID",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Response status code is 500\", function () {",
+                  "  pm.response.to.have.status(500);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Basic {{token}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"id\": \"e0fb3301-cb3e-47f1-9b51-35fbgf94265bb\",\n    \"firstName\": \"{{nameUpdate}}\",\n    \"lastName\": \"{{lastnameUpdate}}\",\n    \"dependants\": {{dependantsUpdate}}\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{url}}",
+              "host": ["{{url}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Employee With Incorrect ID",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Response status code is 500\", function () {",
+                  "  pm.response.to.have.status(500);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Basic {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{url}}/e0fb3301-cb3e-47f1-9b51-35ff32523sdg",
+              "host": ["{{url}}"],
+              "path": ["e0fb3301-cb3e-47f1-9b51-35ff32523sdg"]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "let token = \"VGVzdFVzZXIzMjA6Q3hwMz91WC8zOzVC\";",
+          "let url = \"https://wmxrwq14uc.execute-api.us-east-1.amazonaws.com/Prod/api/employees\";",
+          "",
+          "function generateRandomString(length) {",
+          "    const chars = \"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ\";",
+          "    let result = \"\";",
+          "    for (let i = 0; i < length; i++) {",
+          "        result += chars.charAt(Math.floor(Math.random() * chars.length));",
+          "    }",
+          "    return result;",
+          "}",
+          "",
+          "function generateRandomDependants() {",
+          "    return Math.floor(Math.random() * 33);",
+          "}",
+          "",
+          "pm.environment.set(\"nameCreate\", generateRandomString(8));",
+          "pm.environment.set(\"lastnameCreate\", generateRandomString(10));",
+          "pm.environment.set(\"dependantsCreate\", generateRandomDependants());",
+          "pm.environment.set(\"nameUpdate\", generateRandomString(8));",
+          "pm.environment.set(\"lastnameUpdate\", generateRandomString(10));",
+          "pm.environment.set(\"dependantsUpdate\", generateRandomDependants());",
+          "pm.environment.set(\"token\", token);",
+          "pm.environment.set(\"url\", url);"
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [""]
+      }
+    }
+  ]
+}
